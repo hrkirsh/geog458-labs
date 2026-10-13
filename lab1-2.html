@@ -4,16 +4,20 @@
     <meta charset='utf-8' />
     <title>my First Map</title>
     <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <!--- Load CSS and Javascript from Mapbox Content Delivery Network -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
     <style>
+        /* Adjust webpage and map positioning */
         body { margin: 0; padding: 0; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
    </style>
 </head>
 <body>
+    // Create 'map' container
    <div id='map'></div>
    <script>
+    // initialize map and render object inside of 'map' container
       mapboxgl.accessToken = 'pk.eyJ1IjoiaHJraXJzaCIsImEiOiJjbWg1OTJ3NnIwM2p3MmxvZThnNGp6b3htIn0.mZMPWlVv49G_2YIZjqy6hA';
       const mymap = new mapboxgl.Map({
              container: 'map',
@@ -22,14 +26,19 @@
              center: [-122.3379, 47.6028],
              zoom: 15
           });
-
+// Configure map style-- hide POI and Road labels, show transit labels
 mymap.on('style.load', () => {
     mymap.setConfigProperty('basemap', 'lightPreset', 'dusk');
     mymap.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
+    // Show light rail and ferry labels, hide road labels. Hiding road labels improves
+    // map readability by reducing the number of words on the page and general clutter. The transit
+    // labels are useful for navigation, such as for someone who was focused on using public transportation 
+    // rather than driving. The combination of the two style choices could improve the map for these users.
     mymap.setConfigProperty('basemap', 'showTransitLabels', true); 
     mymap.setConfigProperty('basemap', 'showRoadLabels', false)
 });
-
+// Add navigation and fullscreen toggle, allowing users to zoom in and out 
+// and expand the map into fullscreen
 mymap.addControl(new mapboxgl.FullscreenControl());
 mymap.addControl(new mapboxgl.NavigationControl());
 </script>
