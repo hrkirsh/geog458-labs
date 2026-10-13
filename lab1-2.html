@@ -17,11 +17,19 @@
       mapboxgl.accessToken = 'pk.eyJ1IjoiaHJraXJzaCIsImEiOiJjbWg1OTJ3NnIwM2p3MmxvZThnNGp6b3htIn0.mZMPWlVv49G_2YIZjqy6hA';
       const mymap = new mapboxgl.Map({
              container: 'map',
-             style: 'mapbox://styles/mapbox/light-v11',
-             projection: 'equalEarth', //Display the map as a globe since satellite-v9 defaults to Mercator
-             center: [-122.3, 47.655],
-             zoom:14
+             // style: 'mapbox://styles/mapbox/navigation-night-v1',
+             // projection: 'equalEarth', //Display the map as a globe since satellite-v9 defaults to Mercator
+             center: [-122.3379, 47.6028],
+             zoom: 15
           });
+
+mymap.on('style.load', () => {
+    mymap.setConfigProperty('basemap', 'lightPreset', 'dusk');
+    mymap.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
+    mymap.setConfigProperty('basemap', 'showTransitLabels', true); 
+    mymap.setConfigProperty('basemap', 'showRoadLabels', false)
+});
+
 mymap.addControl(new mapboxgl.FullscreenControl());
 mymap.addControl(new mapboxgl.NavigationControl());
 </script>
