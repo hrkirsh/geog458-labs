@@ -12,6 +12,20 @@
         body { margin: 0; padding: 0; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
    </style>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%;}
+        #marker {
+        background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        }
+        .mapboxgl-popup {
+            max-width: 200px;}
+    </style>
 </head>
 <body>
     <!---Create 'map' container-->
@@ -26,6 +40,15 @@
              center: [-122.3379, 47.6028],
              zoom: 15
           });
+           // create DOM element for the marker
+        const el = document.createElement('div');
+            el.id = 'marker';
+       
+        const marker1 =  new mapboxgl.Marker(el)
+                                    .setLngLat([-122,47.5])
+                                    .setPopup(new mapboxgl.Popup().setText("hi"))
+                                    .addTo(mymap);
+
 // Configure map style-- hide POI and Road labels, show transit labels
 mymap.on('style.load', () => {
     mymap.setConfigProperty('basemap', 'lightPreset', 'dusk');
