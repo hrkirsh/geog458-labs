@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Top 10 Most Populous Cities in the World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        /* Layout of the legend panel. */
+        #legend {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 110px;
+            background: #fff;
+            margin-right: 20px;
+            margin-bottom: 40px;
+            padding: 10px 20px 10px 10px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        /* Each row for a magnitude value. */
+        .break {
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* The circular symbol. */
+        .dot {
+            display: inline-block;
+            margin-top: 5px;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        /* Label next to the symbol. */
+        .dot-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-style: italic;
+        }
+
+        /* Link color within the legend. */
+        #legend a {
+            color: black;
+        }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="legend"></div>
+    <script>    
+        // Anchor the legend to the HTML element with id="legend".
+        const legend = document.getElementById('legend');
+        const grades = [0.01, 1, 16];
+        const radii = [4, 8, 16];
+        const colors = ['navy', 'navy', 'navy'];
+        const labels = ['<strong>Population (millions)</strong>'];
+
+        for (let i = 0; i < grades.length; i++) {
+            const value = grades[i];
+            const diameter = 2 * radii[i];
+
+            labels.push(
+                '<p class="break"><i class="dot" style="background:' + colors[i] +
+                '; width:' + diameter + 'px; height:' + diameter +
+                'px;"></i> <span class="dot-label" style="top:' +
+                diameter / 2 + 'px;">' + value + '</span></p>'
+            );
+        }
+
+        const source =
+            '<p style="text-align:right; font-size:10pt;">Source: ' +
+            '<a href="https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/">NaturalEarth</a></p>';
+
+        legend.innerHTML = labels.join('') + source;
+
+    </script>
+    
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaHJraXJzaCIsImEiOiJjbWg1OTJ3NnIwM2p3MmxvZThnNGp6b3htIn0.mZMPWlVv49G_2YIZjqy6hA';
+        const mymap = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/light-v11',
+            projection: 'globe',
+            center: [70, 26],
+            zoom: 2
+        });
+        
+ mymap.on('load', async () => {
+    const response = await fetch('data/world-cities.geojson');
+    const all = await response.json();
+
+    // Filter to only keep the top 10 most populated cities
+    const top10 = {
+        type: 'FeatureCollection',
+        features: all.features
+            .filter(f => Number(f.properties.population) > 0)
+            .sort((a, b) => Number(b.properties.population) - Number(a.properties.population))
+            .slice(0, 11)
+    };
+
+    // Add top 10 most populous cities as map source
+    mymap.addSource('top10', {
+        type: 'geojson',
+        data: top10
+    });
+
+    mymap.addLayer({
+        id: 'top10-layer',
+        type: 'circle',
+        source: 'top10',
+        paint: {
+            'circle-radius': [
+                'interpolate', ['linear'],
+                ['sqrt', ['to-number', ['get', 'population'], 0]],
+                3000, 10,
+                3500, 13,
+                4000, 16, 
+                4500, 19,
+                5000, 22, 
+                5600, 25 // Six classes to better represent variety among cities that may 
+                        //  only differ by a few million 
+            ], 
+            'circle-stroke-width': 1,
+            'circle-stroke-color': 'navy',
+            'circle-color': 'navy' // navy circle color to clearly contrast white basemap
+        }
+    });
+
+            // Click a city circle to view its magnitude.
+            mymap.on('click', 'top10-layer', (event) => {
+                const feature = event.features[0];
+                const coordinates = feature.geometry.coordinates.slice(0, 2);
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(`<strong>City:</strong> ${feature.properties.city}
+                    <strong> Population:</strong> ${feature.properties.population}`)
+                    .addTo(mymap);
+            });
+            });
+ 
+    </script>
+</body>
+</html>

@@ -61,7 +61,7 @@
         const grades = [2, 4.5, 8.5];
         const radii = [4, 9, 17];
         const colors = ['#fdd49e', '#d7301f', '#7f0000'];
-        const labels = ['<strong>Magnitude</strong>'];
+        const labels = ['<strong>Population</strong>'];
 
         for (let i = 0; i < grades.length; i++) {
             const value = grades[i];
@@ -111,16 +111,8 @@
                     'circle-radius': [
                         'interpolate', ['linear'],
                         ['to-number', ['get', 'mag'], 0],
-                        1,    0.7,
-                        1.5,  2,
-                        2,    4,
-                        2.5,  5,
-                        3,    6,
-                        3.5,  7,
-                        4.5,  9,
-                        6.5,  15,
-                        8.5,  17,
-                        10.5, 20
+                        80000,    0.7,
+                        9000,  2
                     ],
                     'circle-stroke-width': 1,
                     'circle-color': [
