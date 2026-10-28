@@ -115,49 +115,49 @@
 
       // Step 3: insert the interpolation tile code here.
 
-    map.addSource('station-data', {
-    type: 'geojson',
-    data: 'data/pm25_stations.geojson'
-    });
-    map.addLayer({
-    id: 'stations',
-    type: 'circle',
-    source: 'station-data',
-    paint: {
-        'circle-radius': 6,
-        'circle-color': '#18364d',
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 2
-    }
-    });
+map.addSource('station-data', {
+  type: 'geojson',
+  data: 'data/pm25_stations.geojson'
+});
+map.addLayer({
+  id: 'stations',
+  type: 'circle',
+  source: 'station-data',
+  paint: {
+    'circle-radius': 6,
+    'circle-color': '#18364d',
+    'circle-stroke-color': '#ffffff',
+    'circle-stroke-width': 2
+  }
+});
 
-    map.on('click', 'stations', (event) => {
-    const feature = event.features[0];
-    const station = feature.properties;
-    new maplibregl.Popup()
-        .setLngLat(feature.geometry.coordinates)
-        .setText([
-        station.station_name,
-        'Measured PM2.5: ' + station.pm25 + ' ' + station.units,
-        'Date: ' + station.date,
-        'Station ID: ' + station.station_id
-        ].join('\n'))
-        .addTo(map);
+map.on('click', 'stations', (event) => {
+  const feature = event.features[0];
+  const station = feature.properties;
+  new maplibregl.Popup()
+    .setLngLat(feature.geometry.coordinates)
+    .setText([
+      station.station_name,
+      'Measured PM2.5: ' + station.pm25 + ' ' + station.units,
+      'Date: ' + station.date,
+      'Station ID: ' + station.station_id
+    ].join('\n'))
+    .addTo(map);
+});
+map.on('mouseenter', 'stations', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'stations', () => {
+  map.getCanvas().style.cursor = '';
+});
+document.getElementById('station-control').hidden = false;
+document.getElementById('show-stations').addEventListener('change', (event) => {
+  map.setLayoutProperty('stations', 'visibility',
+    event.target.checked ? 'visible' : 'none');
+});
+document.getElementById('status').textContent =
+  'Step 4: click a station to read its measured value.';
     });
-    map.on('mouseenter', 'stations', () => {
-    map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'stations', () => {
-    map.getCanvas().style.cursor = '';
-    });
-    document.getElementById('station-control').hidden = false;
-    document.getElementById('show-stations').addEventListener('change', (event) => {
-    map.setLayoutProperty('stations', 'visibility',
-        event.target.checked ? 'visible' : 'none');
-    });
-    document.getElementById('status').textContent =
-    'Step 4: click a station to read its measured value.';
-        });
   </script>
 </body>
 </html>
