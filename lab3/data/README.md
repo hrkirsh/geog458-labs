@@ -13,3 +13,16 @@ The numeric `pm25` field uses **µg/m³**, not AQI. `station_name`, `station_id`
 Reproduce by selecting Washington, the bounding box in the metadata, 2025-07-05, 24-HR BLK AVG, PM25 24-hour 2012, no exceptional events, nonnegative values and at least 75% observations. If multiple POCs remain, retain the lowest numeric POC per site. Preserve station identifiers as text.
 
 An interpolated map estimates values between monitors. Its apparent 250 m cell size does not establish 250 m measurement accuracy. This sample supports a classroom demonstration, not a health or regulatory conclusion.
+
+# Provided Heat and Pool observations
+
+Source: [King Country Heat and Health Data Tool](https://experience.arcgis.com/experience/a7c15594fec24cdba13d0eceac340e99/page/Page), median afternoon temperature (F) by census block, downloaded 2026-10-25.
+
+Date: **2020-07**, 25552 census blocks
+
+- `Heat_and_Health_Data_by_Census_Block_-_GPKG_Export.gpkg`: load in QGIS as GeoPackage, CRS EPSG:4326 (converted to centroid, interpolated, and reprojected as WGS84)
+- `lab3/data/Swimming_Pools_2997090721674912469.csv`: load in QGIS as .csv, CRS EPSG:4326
+- `swimmingpools.geojson`: exported as geojson for Mapbox
+
+This tool could be used to show where urban heat islands exist in the city and if the current 
+ public pools are located in areas that best serve those in need of a cool down
