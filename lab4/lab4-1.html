@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lab 4 — Pittsburgh trees</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaHJraXJzaCIsImEiOiJjbWg1OTJ3NnIwM2p3MmxvZThnNGp6b3htIn0.mZMPWlVv49G_2YIZjqy6hA';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/hrkirsh/cmvzpl8fw004c01st0ydjdwh5',
+      projection: 'globe',
+      center: [-79.999732, 40.4374],
+      zoom: 11,
+      maxZoom: 15
+    });
+
+    map.addControl(new mapboxgl.FullscreenControl());
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // This callback runs after the map style is ready. Keep its braces.
+    map.on('load', () => {
+    map.setFog({});
+    map.addSource('trees', {
+    type: 'geojson',
+    data: 'data/trees.geojson'
+    });
+
+    map.addLayer({
+        'id': "trees-heat",
+        'type': "heatmap",
+        'source': "trees",
+        'maxzoom': 15,
+        'paint': {
+            'heatmap-weight': {
+            'property': "dbh",
+            'type': "exponential",
+            'stops': [[1, 0], [62, 1]]
+            },
+            'heatmap-intensity': {
+            'stops': [[11, 0.5], [15, 2.5]]
+            },
+            'heatmap-color': [
+            "interpolate", ["linear"], ["heatmap-density"],
+            0, "rgba(236,222,239,0)",
+            0.2, "rgb(245, 233, 243)",
+            0.4, "rgb(223, 191, 220)",
+            0.6, "rgb(201, 150, 196)",
+            0.8, "rgb(177, 108, 173)"
+            ],
+            'heatmap-radius': {
+            'stops': [[11, 12], [15, 15]]
+            },
+            'heatmap-opacity': {
+            'default': 1,
+            'stops': [[14, 1], [15, 0]]
+            }
+        }
+        });
+    map.addLayer({
+    'id': "trees-point",
+    'type': "circle",
+    'source': "trees",
+    'minzoom': 14,
+    'paint': {
+        'circle-radius': {
+        'property': "dbh",
+        'type': "exponential",
+        'stops': [
+            [{ 'zoom': 15, 'value': 1 }, 5],
+            [{ 'zoom': 15, 'value': 62 }, 10],
+            [{ 'zoom': 22, 'value': 1 }, 20],
+            [{ 'zoom': 22, 'value': 62 }, 50]
+        ]
+        },
+        'circle-color': {
+        'property': "dbh",
+        'type': "exponential",
+        'stops': [
+            [0, "rgba(236,222,239,0)"],
+            [10, "rgb(245, 233, 243)"],
+            [20, "rgb(223, 191, 220)"],
+            [30, "rgb(201, 150, 196)"],
+            [40, "rgb(177, 108, 173)"],
+            [50, "rgb(153, 65, 151)"],
+            [60, "rgb(128, 0, 128)"]
+        ]
+        },
+        'circle-stroke-color': "white",
+        'circle-stroke-width': 1,
+        'circle-opacity': {
+        'stops': [[14, 0], [15, 1]]
+        }
+    }
+    });
+    map.on('click', 'trees-point', (event) => {
+    new mapboxgl.Popup()
+        .setLngLat(event.features[0].geometry.coordinates)
+        .setHTML(`<strong>DBH:</strong> ${event.features[0].properties.dbh}`)
+        .addTo(map);
+    });
+    });
+  </script>
+</body>
+</html>
