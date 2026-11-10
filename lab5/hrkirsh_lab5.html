@@ -35,7 +35,7 @@
     </select>
     <button id="play-stop" type="button" aria-pressed="true">Stop</button>
     <p>Data time: <time id="time-display">Loading date/time...</time></p>
-    <label for="time-slider">Data time (Seattle: PDT/PST)</label>
+    <label for="time-slider">Data time (Port Fourchon: CDT/CST)</label>
     <input id="time-slider" type="range" min="0" max="1" value="0" step="1" disabled
         style="display:block;width:100%;margin:8px 0;accent-color:#fd805d;">
   </div>
@@ -44,14 +44,14 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoiaHJraXJzaCIsImEiOiJjbWg1OTJ3NnIwM2p3MmxvZThnNGp6b3htIn0.mZMPWlVv49G_2YIZjqy6hA';
     const map = new mapboxgl.Map({
       container: 'map', style: 'mapbox://styles/mapbox/dark-v11',
-      center: [-122.45, 47.60], zoom: 8, pitch: 35
+      center: [-90.2152, 29.127], zoom: 9, pitch: 35
     });
     const overlay = new deck.MapboxOverlay({layers: []});
     map.addControl(overlay);
 
     async function main() {
       const status = document.getElementById('status');
-      const response = await fetch('./ais_trips.json');
+      const response = await fetch('./nola_trips.json');
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       const trips = data.filter(d => d.path.length >= 2);
@@ -64,8 +64,8 @@
       let previousFrame = null;
       status.textContent = `${trips.length} paths loaded`;
 
-    const metadataResponse = await fetch('./ais_trips_metadata.json');
-    if (!metadataResponse.ok) throw new Error('Could not load ais_trips_metadata.json.');
+    const metadataResponse = await fetch('./nola_trips_metadata.json');
+    if (!metadataResponse.ok) throw new Error('Could not load nola_trips_metadata.json.');
     const metadata = await metadataResponse.json();
     const timeOrigin = Date.parse(metadata.time_origin_utc);
     if (!Number.isFinite(timeOrigin)) throw new Error('Invalid time_origin_utc in ais_trips_metadata.json.');
@@ -75,7 +75,7 @@
     timeSlider.max = String(endTime);
     timeSlider.disabled = false;
     const timeFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'America/Chicago',
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', second: '2-digit',
         hourCycle: 'h23', timeZoneName: 'short'
